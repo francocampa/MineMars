@@ -7,6 +7,7 @@ bool InputController::right = false;
 bool InputController::left = false;
 bool InputController::leftMouse = false;
 bool InputController::rightMouse = false;
+bool InputController::space = false;
 glm::ivec2 InputController::mousePos = {0,0};
 short InputController::scroll = 0;
 
@@ -38,7 +39,10 @@ void InputController::process()
                 case SDLK_d:
                     right = true;
                     break;
-              }
+                case SDLK_SPACE:
+                    space = true;
+                    break;
+            }
             break;
         case SDL_KEYUP:
             switch (event.key.keysym.sym) {
@@ -61,6 +65,9 @@ void InputController::process()
                 case SDLK_RIGHT:
                 case SDLK_d:
                     right = false;
+                    break;
+                case SDLK_SPACE:
+                    space = false;
                     break;
                 }
             break;

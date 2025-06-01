@@ -36,7 +36,7 @@ void GameController::init()
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
-    glClearColor(0.529f, 0.808f, 0.922f, 1.0f);
+    glClearColor(0.6, 0.4f, 0, 0.2f);
     glOrtho(0, windowSize.x, windowSize.y, 0, -1, 1);
 
     glMatrixMode(GL_MODELVIEW);

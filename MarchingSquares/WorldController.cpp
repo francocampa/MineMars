@@ -10,6 +10,16 @@ float WorldController::fOfXY(int x, int y)
 		: (noise.GetNoise((float)x, (float)y, z) + 1.0f) * 0.5f;
 }
 
+bool WorldController::isVertexFull(int x, int y)
+{
+	return isValueFull(fOfXY(x,y));
+}
+
+bool WorldController::isValueFull(float value)
+{
+	return value > 0.5;
+}
+
 void WorldController::drawMarchingSquare(int x, int y, short state)
 {
 	int xOff = x + res / 2;
@@ -130,20 +140,22 @@ void WorldController::drawChunks()
 
 void WorldController::handleCamera()
 {
-	if (InputController::up)
+	/*if (InputController::up)
 		cameraPos.y += GameController::deltaTime * 200;
 	if (InputController::down)
 		cameraPos.y -= GameController::deltaTime * 200;
 	if (InputController::right)
 		cameraPos.x -= GameController::deltaTime * 200;
 	if (InputController::left)
-		cameraPos.x += GameController::deltaTime * 200;
+		cameraPos.x += GameController::deltaTime * 200;*/
 
-	glm::ivec2 gridCenter = -cameraPos;
+	cameraPos.x = player.getPosition().x; //does not work xd
+	cameraPos.y = player.getPosition().y;
+
+	glm::ivec2 gridCenter = cameraPos;
 	gridCenter /= res * chunkSize;
 
-	glm::ivec2 newChunkInit = { cameraPos.x < 0 ? gridCenter.x : gridCenter.x - 1 , cameraPos.y > 0 ? gridCenter.y - 1 : gridCenter.y };
-
+	glm::ivec2 newChunkInit = { cameraPos.x > 0 ? gridCenter.x - 2 : gridCenter.x - 3,cameraPos.y > 0 ? gridCenter.y -3 : gridCenter.y - 2 };
 	if (chunkInit != newChunkInit) {
 		chunkInit.x = newChunkInit.x;
 		chunkInit.y = newChunkInit.y;
@@ -157,7 +169,7 @@ void WorldController::handleCamera()
 
 void WorldController::handleWorldModification()
 {
-	glm::ivec2 globalMousePos = { InputController::mousePos.x - cameraPos.x, InputController::mousePos.y - cameraPos.y };
+	glm::ivec2 globalMousePos = { InputController::mousePos.x + cameraPos.x - GameController::windowSize.x / 2, InputController::mousePos.y + cameraPos.y - GameController::windowSize.y / 2 };
 	mouseGridPos = { globalMousePos.x/res + 1, globalMousePos.y/res + 1};
 
 	if (InputController::leftMouse) {
@@ -186,10 +198,10 @@ void WorldController::loadWorldChunks()
 					int fullX = x + xOff;
 					int fullY = y + yOff;
 					short state = 0;
-					state |= (fOfXY(fullX, fullY) > 0.5f) << 3;  //Top left
-					state |= (fOfXY(fullX + 1, fullY) > 0.5f) << 2; //Top right
-					state |= (fOfXY(fullX + 1, fullY + 1) > 0.5f) << 1; //Bottom right
-					state |= (fOfXY(fullX, fullY + 1) > 0.5f) << 0; //Bottom left
+					state |= isVertexFull(fullX, fullY) << 3;  //Top left
+					state |= isVertexFull(fullX + 1, fullY) << 2; //Top right
+					state |= isVertexFull(fullX + 1, fullY + 1) << 1; //Bottom right
+					state |= isVertexFull(fullX, fullY + 1) << 0; //Bottom left
 
 					float g = (noise.GetNoise((float)(fullX), (float)(fullY), z) + 1.0f) * 0.5f;
 					glm::ivec2 xyVec = { fullX,fullY };
@@ -201,7 +213,7 @@ void WorldController::loadWorldChunks()
 	}
 }
 
-WorldController::WorldController()
+WorldController::WorldController() : player(glm::vec2(GameController::windowSize.x/2, 0))
 {
 	res = baseRes;
 	noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
@@ -211,6 +223,8 @@ WorldController::WorldController()
 
 	cameraPos = { 0,0 };
 	chunkPixelSize = chunkSize * res;
+
+	player.setWorld(this);
 
 	loadWorldChunks();
 }
@@ -223,22 +237,30 @@ void WorldController::process()
 
 	glPushMatrix();
 
-	glTranslatef(cameraPos.x,cameraPos.y, 0);	
+	glTranslatef(-cameraPos.x + GameController::windowSize.x/2,-cameraPos.y + GameController::windowSize.y / 2, 0);
 
 	glColor4f(1.0f, 0.5, 0, 1);
 	drawChunks();
 
 	glPointSize(15);
 	glBegin(GL_POINTS);
-	glColor4f(0.5f, 0, 1.0f, 0.5f);
+	glColor4f(1, 1, 1, 0.5f);
 	glVertex2i(mouseGridPos.x * res, mouseGridPos.y * res);
 	glEnd();
+
+	player.process();
+
 
 	glPopMatrix();
 
 	
 	glColor4f(1, 1, 1,1);
 
+}
+
+int WorldController::getRes()
+{
+	return res;
 }
 
 
@@ -277,3 +299,13 @@ void WorldController::process()
 		//		glColor3f(1, 1, 1);
 		//	}
 		//
+	/*glPointSize(5);
+		for (int x = 0; x < chunkSize; x++)
+			for (int y = 0; y < chunkSize; y++)
+			{
+				glBegin(GL_POINTS);
+				glColor3f(1,1,1);
+				glVertex2i(x * res, y * res);
+				glEnd();
+				glColor3f(1, 1, 1);
+			}*/

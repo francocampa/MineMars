@@ -9,6 +9,8 @@ public:
 	static bool left;
 	static bool down;
 
+	static bool space;
+
 	static glm::ivec2 mousePos;
 	static bool leftMouse;
 	static bool rightMouse;

@@ -1,6 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
 #include "FastNoiseLite.h"
+#include "Player.h"
 #include "unordered_map"
 //#include <iostream>
 
@@ -17,6 +18,8 @@ struct PairHash {
 class WorldController
 {
 private:
+	Player player;
+
 	std::vector<glm::ivec2> vertexBuffer;
 
 	int seed = 0;
@@ -36,7 +39,6 @@ private:
 
 	std::unordered_map<std::pair<int, int>, float,PairHash> modifiedVertexes;
 
-	float fOfXY(int x, int y);
 	void drawMarchingSquare(int x, int y, short state);
 	void addTriangle(glm::ivec2 a, glm::ivec2 b, glm::ivec2 c);
 	void drawChunks();
@@ -48,5 +50,9 @@ public:
 	WorldController();
 	void process();
 
+	int getRes();
+	float fOfXY(int x, int y);
+	bool isVertexFull(int x, int y);
+	bool isValueFull(float value);
 };
 
