@@ -1,0 +1,36 @@
+﻿  GameController.cpp
+  InputController.cpp
+  Main.cpp
+  WorldController.cpp
+C:\Users\fcamp\OneDrive\Desktop\GameDev\MarchingSquares\WorldController.cpp(134,44): warning C4244: '+=': conversion from 'float' to 'T', possible loss of data
+C:\Users\fcamp\OneDrive\Desktop\GameDev\MarchingSquares\WorldController.cpp(134,44): warning C4244:         with
+C:\Users\fcamp\OneDrive\Desktop\GameDev\MarchingSquares\WorldController.cpp(134,44): warning C4244:         [
+C:\Users\fcamp\OneDrive\Desktop\GameDev\MarchingSquares\WorldController.cpp(134,44): warning C4244:             T=int
+C:\Users\fcamp\OneDrive\Desktop\GameDev\MarchingSquares\WorldController.cpp(134,44): warning C4244:         ]
+C:\Users\fcamp\OneDrive\Desktop\GameDev\MarchingSquares\WorldController.cpp(136,44): warning C4244: '-=': conversion from 'float' to 'T', possible loss of data
+C:\Users\fcamp\OneDrive\Desktop\GameDev\MarchingSquares\WorldController.cpp(136,44): warning C4244:         with
+C:\Users\fcamp\OneDrive\Desktop\GameDev\MarchingSquares\WorldController.cpp(136,44): warning C4244:         [
+C:\Users\fcamp\OneDrive\Desktop\GameDev\MarchingSquares\WorldController.cpp(136,44): warning C4244:             T=int
+C:\Users\fcamp\OneDrive\Desktop\GameDev\MarchingSquares\WorldController.cpp(136,44): warning C4244:         ]
+C:\Users\fcamp\OneDrive\Desktop\GameDev\MarchingSquares\WorldController.cpp(138,44): warning C4244: '-=': conversion from 'float' to 'T', possible loss of data
+C:\Users\fcamp\OneDrive\Desktop\GameDev\MarchingSquares\WorldController.cpp(138,44): warning C4244:         with
+C:\Users\fcamp\OneDrive\Desktop\GameDev\MarchingSquares\WorldController.cpp(138,44): warning C4244:         [
+C:\Users\fcamp\OneDrive\Desktop\GameDev\MarchingSquares\WorldController.cpp(138,44): warning C4244:             T=int
+C:\Users\fcamp\OneDrive\Desktop\GameDev\MarchingSquares\WorldController.cpp(138,44): warning C4244:         ]
+C:\Users\fcamp\OneDrive\Desktop\GameDev\MarchingSquares\WorldController.cpp(140,44): warning C4244: '+=': conversion from 'float' to 'T', possible loss of data
+C:\Users\fcamp\OneDrive\Desktop\GameDev\MarchingSquares\WorldController.cpp(140,44): warning C4244:         with
+C:\Users\fcamp\OneDrive\Desktop\GameDev\MarchingSquares\WorldController.cpp(140,44): warning C4244:         [
+C:\Users\fcamp\OneDrive\Desktop\GameDev\MarchingSquares\WorldController.cpp(140,44): warning C4244:             T=int
+C:\Users\fcamp\OneDrive\Desktop\GameDev\MarchingSquares\WorldController.cpp(140,44): warning C4244:         ]
+C:\Users\fcamp\OneDrive\Desktop\GameDev\MarchingSquares\WorldController.cpp(226,36): warning C4244: 'argument': conversion from 'T' to 'GLfloat', possible loss of data
+C:\Users\fcamp\OneDrive\Desktop\GameDev\MarchingSquares\WorldController.cpp(226,36): warning C4244:         with
+C:\Users\fcamp\OneDrive\Desktop\GameDev\MarchingSquares\WorldController.cpp(226,36): warning C4244:         [
+C:\Users\fcamp\OneDrive\Desktop\GameDev\MarchingSquares\WorldController.cpp(226,36): warning C4244:             T=int
+C:\Users\fcamp\OneDrive\Desktop\GameDev\MarchingSquares\WorldController.cpp(226,36): warning C4244:         ]
+C:\Users\fcamp\OneDrive\Desktop\GameDev\MarchingSquares\WorldController.cpp(226,24): warning C4244: 'argument': conversion from 'T' to 'GLfloat', possible loss of data
+C:\Users\fcamp\OneDrive\Desktop\GameDev\MarchingSquares\WorldController.cpp(226,24): warning C4244:         with
+C:\Users\fcamp\OneDrive\Desktop\GameDev\MarchingSquares\WorldController.cpp(226,24): warning C4244:         [
+C:\Users\fcamp\OneDrive\Desktop\GameDev\MarchingSquares\WorldController.cpp(226,24): warning C4244:             T=int
+C:\Users\fcamp\OneDrive\Desktop\GameDev\MarchingSquares\WorldController.cpp(226,24): warning C4244:         ]
+  Generating Code...
+  MarchingSquares.vcxproj -> C:\Users\fcamp\OneDrive\Desktop\GameDev\MarchingSquares\x64\Debug\MarchingSquares.exe
