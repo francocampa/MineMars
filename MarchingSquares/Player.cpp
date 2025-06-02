@@ -49,7 +49,7 @@ bool Player::hasFloor()
 	glBegin(GL_POINTS);
 	int posXSign = std::abs(pos.x) / pos.x;
 	int posYSign = std::abs(pos.y) / pos.y;
-	printf("%d,%d\n", posXSign, posYSign);
+	//printf("%d,%d\n", posXSign, posYSign);
 	glm::vec2 gridPos = { (int)pos.x - posXSign * ((int)pos.x) % world->getRes(), (int)pos.y - posYSign * ((int)pos.y) % world->getRes() };
 	for (int x = -1; x <= 2;x++)
 		for (int y = -1; y <= 2;y++) {
@@ -71,6 +71,23 @@ bool Player::hasFloor()
 	return ret;
 }
 
+void Player::drawArm(Arm& arm)
+{
+	glPushMatrix();
+	ArmPart* aux = arm.first;
+	glLineWidth(10);
+	while (aux != NULL)
+	{
+		//printf("%f,%f\n", aux->pos.x, aux->pos.y);
+		glBegin(GL_LINES);
+		glVertex2f(aux->pos.x, aux->pos.y);
+		glVertex2f(aux->pos.x + aux->length * cos(aux->angle), aux->pos.y + aux->length * sin(aux->angle));
+		glEnd();
+		aux = aux->next;
+	}
+	glPopMatrix();
+}
+
 Player::Player(glm::ivec2 position)
 {
 	this->pos = position;
@@ -89,24 +106,51 @@ Player::Player(glm::ivec2 position)
 	}
 
 	ArmPart * part1 = new ArmPart();
-	part1->length = 100;
-	part1->angle = 0;
-	part1->pos = GameController::windowSize / 2;
 	ArmPart* part2 = new ArmPart();
-	part2->length = 100;
-	part2->angle = 0;
-	part2->pos = GameController::windowSize / 2;
-	part2->pos.x += 100;
+	part2->prev = part1;
 	part1->next = part2;
 
-	arm.first = part1;
-	arm.last = part2;
+	leftArm.first = part1;
+	leftArm.last = part2;
+
+	part1 = new ArmPart();
+	part2 = new ArmPart();
+	part2->prev = part1;
+	part1->next = part2;
+
+	rightArm.first = part1;
+	rightArm.last  = part2;
 
 }
 
 void Player::setWorld(WorldController* world)
 {
 	this->world = world;
+}
+
+void calculateInverseKin(Arm &arm, glm::vec2 target, glm::vec2 base) {
+	ArmPart* part = arm.last;
+
+	while (part != NULL)
+	{
+		glm::vec2 dir = target - part->pos;
+		dir /= glm::length(dir);
+		dir *= -part->length;
+		part->pos = target + dir;
+		part->angle = std::atan2(dir.y, dir.x) + M_PI;
+
+		target = part->pos;
+		part = part->prev;
+	}
+	
+	base += arm.first->pos;
+	part = arm.first;
+	while (part != NULL)
+	{
+		part->pos -= base;
+		part = part->next;
+	}
+
 }
 
 void Player::process()
@@ -119,30 +163,13 @@ void Player::process()
 
 	glm::vec2 target = { InputController::mousePos.x + pos.x - GameController::windowSize.x / 2, InputController::mousePos.y + pos.y - GameController::windowSize.y / 2 };
 
-	glm::vec2 dir = target - arm.last->pos;
-	dir /= glm::length(dir);
-	dir *= -100;
-	arm.last->pos = target + dir;
-	arm.last->angle = std::atan2(dir.y, dir.x) + M_PI;
-	
-	target = arm.last->pos;
-	dir = target - arm.first->pos;
-	dir /= glm::length(dir);
-	dir *= -100;
-	arm.first->pos = target + dir;
-	arm.first->angle = std::atan2(dir.y, dir.x) + M_PI;
-
-
-	glm::vec2 offset = { -GameController::windowSize.x / 2, -GameController::windowSize.y / 2 };
-	offset += arm.first->pos;
-
-	arm.first->pos -= offset;
-	arm.last->pos -= offset;
-
+	calculateInverseKin(leftArm, target, { -pos.x + 10, -pos.y });
+	calculateInverseKin(rightArm,target, { -pos.x - 10, -pos.y });
 }
 
 void Player::draw()
 {
+	glColor4f(1, 1, 1, 1);
 	glPushMatrix();
 	glTranslatef(pos.x, pos.y,0);
 	glBegin(GL_TRIANGLE_FAN);
@@ -150,23 +177,9 @@ void Player::draw()
 		glVertex2f(v.x, v.y);
 	glEnd();
 	glPopMatrix();
-
-	glPushMatrix();
-	ArmPart* aux = arm.first;
-	glLineWidth(10);
-	while (aux != NULL)
-	{
-		printf("%f,%f\n", aux->pos.x,aux->pos.y);
-		glBegin(GL_LINES);
-		glVertex2f(aux->pos.x, aux->pos.y);
-		glVertex2f(aux->pos.x + aux->length * cos(aux->angle), aux->pos.y + aux->length*sin(aux->angle));
-		glEnd();
-		aux = aux->next;
-	}
-
-	glPopMatrix();
-
 	
+	drawArm(leftArm);
+	drawArm(rightArm);
 }
 
 void Player::startTimer(std::string timer)

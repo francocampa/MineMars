@@ -186,8 +186,8 @@ void WorldController::loadWorldChunks()
 {
 	vertexBuffer.clear();
 
-	for (int chunkX = chunkInit.x; chunkX <= chunkInit.x + 4;chunkX++) {
-		for (int chunkY = chunkInit.y; chunkY <= chunkInit.y + 4;chunkY++) {
+	for (int chunkX = chunkInit.x; chunkX <= chunkInit.x + chunkRadius;chunkX++) {
+		for (int chunkY = chunkInit.y; chunkY <= chunkInit.y + chunkRadius;chunkY++) {
 			int xOff = chunkX * chunkSize;
 			int yOff = chunkY * chunkSize;
 			//printf("%d,%d ", xOff, yOff);

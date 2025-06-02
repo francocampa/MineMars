@@ -33,6 +33,7 @@ private:
 	FastNoiseLite noise;
 
 	glm::ivec2 chunkInit = {-1,-1};
+	int chunkRadius = 4;
 	glm::ivec2 mouseGridPos = mouseGridPos;
 	glm::ivec2 cameraPos;
 	float zoom = 1;

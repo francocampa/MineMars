@@ -11,10 +11,11 @@ struct Arm {
 	ArmPart* last;
 };
 struct ArmPart {
-	glm::vec2 pos;
-	float angle;
-	int length;
+	glm::vec2 pos = {0,0};
+	float angle = 0;
+	int length = 30;
 	ArmPart* next = NULL;
+	ArmPart* prev = NULL;
 };
 
 class WorldController;
@@ -25,12 +26,13 @@ private:
 	WorldController* world;
 
 	std::vector<glm::ivec2> headVertices;
-	Arm arm;
+	Arm leftArm;
+	Arm rightArm;
 
 	glm::vec2 pos;
 	glm::vec2 maxVel = { 300,500 };
 	glm::vec2 vel = { 0,0 };
-	glm::vec2 acc = {200, 500};
+	glm::vec2 acc = {600, 500};
 
 	float coyoteTime = 0.3f;
 
@@ -42,6 +44,7 @@ private:
 
 	void handleMovement();
 	bool hasFloor();
+	void drawArm(Arm &arm);
 public:
 	Player(glm::ivec2 position);
 
