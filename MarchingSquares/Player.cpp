@@ -87,6 +87,21 @@ Player::Player(glm::ivec2 position)
 		float y = radius * sin(angle);
 		headVertices.push_back(glm::ivec2((int)x,(int) y));
 	}
+
+	ArmPart * part1 = new ArmPart();
+	part1->length = 100;
+	part1->angle = 0;
+	part1->pos = GameController::windowSize / 2;
+	ArmPart* part2 = new ArmPart();
+	part2->length = 100;
+	part2->angle = 0;
+	part2->pos = GameController::windowSize / 2;
+	part2->pos.x += 100;
+	part1->next = part2;
+
+	arm.first = part1;
+	arm.last = part2;
+
 }
 
 void Player::setWorld(WorldController* world)
@@ -102,6 +117,28 @@ void Player::process()
 	for (auto timer: timers)
 		timer.second += GameController::deltaTime;
 
+	glm::vec2 target = { InputController::mousePos.x + pos.x - GameController::windowSize.x / 2, InputController::mousePos.y + pos.y - GameController::windowSize.y / 2 };
+
+	glm::vec2 dir = target - arm.last->pos;
+	dir /= glm::length(dir);
+	dir *= -100;
+	arm.last->pos = target + dir;
+	arm.last->angle = std::atan2(dir.y, dir.x) + M_PI;
+	
+	target = arm.last->pos;
+	dir = target - arm.first->pos;
+	dir /= glm::length(dir);
+	dir *= -100;
+	arm.first->pos = target + dir;
+	arm.first->angle = std::atan2(dir.y, dir.x) + M_PI;
+
+
+	glm::vec2 offset = { -GameController::windowSize.x / 2, -GameController::windowSize.y / 2 };
+	offset += arm.first->pos;
+
+	arm.first->pos -= offset;
+	arm.last->pos -= offset;
+
 }
 
 void Player::draw()
@@ -113,6 +150,23 @@ void Player::draw()
 		glVertex2f(v.x, v.y);
 	glEnd();
 	glPopMatrix();
+
+	glPushMatrix();
+	ArmPart* aux = arm.first;
+	glLineWidth(10);
+	while (aux != NULL)
+	{
+		printf("%f,%f\n", aux->pos.x,aux->pos.y);
+		glBegin(GL_LINES);
+		glVertex2f(aux->pos.x, aux->pos.y);
+		glVertex2f(aux->pos.x + aux->length * cos(aux->angle), aux->pos.y + aux->length*sin(aux->angle));
+		glEnd();
+		aux = aux->next;
+	}
+
+	glPopMatrix();
+
+	
 }
 
 void Player::startTimer(std::string timer)

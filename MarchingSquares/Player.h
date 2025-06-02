@@ -4,6 +4,19 @@
 #include "map"
 #include "string"
 
+struct ArmPart;
+
+struct Arm {
+	ArmPart* first;
+	ArmPart* last;
+};
+struct ArmPart {
+	glm::vec2 pos;
+	float angle;
+	int length;
+	ArmPart* next = NULL;
+};
+
 class WorldController;
 
 class Player
@@ -12,6 +25,7 @@ private:
 	WorldController* world;
 
 	std::vector<glm::ivec2> headVertices;
+	Arm arm;
 
 	glm::vec2 pos;
 	glm::vec2 maxVel = { 300,500 };
