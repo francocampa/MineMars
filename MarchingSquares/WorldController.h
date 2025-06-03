@@ -8,6 +8,16 @@
 #include <utility>      // for std::pair
 #include <functional>   // for std::hash
 
+struct Triangle {
+	glm::ivec2 vertices[3];
+	glm::fvec3 color;
+	bool exists = false;
+};
+struct MarchingSquare {
+	Triangle triangles[5];
+	int tope;
+};
+
 struct PairHash {
 	std::size_t operator()(const std::pair<int, int>& p) const {
 		// Combines the hashes of both elements
@@ -32,6 +42,7 @@ private:
 
 	FastNoiseLite noise;
 
+	std::unordered_map<std::pair<int, int>, MarchingSquare, PairHash> chunkTriangles;
 	glm::ivec2 chunkInit = {-1,-1};
 	int chunkRadius = 4;
 	glm::ivec2 mouseGridPos = mouseGridPos;
@@ -41,7 +52,7 @@ private:
 	std::unordered_map<std::pair<int, int>, float,PairHash> modifiedVertexes;
 
 	void drawMarchingSquare(int x, int y, short state);
-	void addTriangle(glm::ivec2 a, glm::ivec2 b, glm::ivec2 c);
+	void addTriangle(int x, int y, glm::ivec2 a, glm::ivec2 b, glm::ivec2 c);
 	void drawChunks();
 	void handleCamera();
 	void handleWorldModification();
@@ -55,5 +66,6 @@ public:
 	float fOfXY(int x, int y);
 	bool isVertexFull(int x, int y);
 	bool isValueFull(float value);
+	MarchingSquare getSquareAt(int x, int y);
 };
 

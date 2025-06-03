@@ -20,99 +20,107 @@ bool WorldController::isValueFull(float value)
 	return value > 0.5;
 }
 
+MarchingSquare WorldController::getSquareAt(int x, int y)
+{
+	printf("%d,%d %d\n",x,y,chunkTriangles.count({x,y}));
+	return chunkTriangles.count({ x,y }) > 0 ? chunkTriangles.at({x,y}) : MarchingSquare();
+}
+
 void WorldController::drawMarchingSquare(int x, int y, short state)
 {
 	int xOff = x + res / 2;
 	int yOff = y + res / 2;
 	glm::ivec2 squarePoints[4] = { {x,y},{x + res,y},{x + res,y + res},{x,y + res} }; //tl, tr, br, bl
 	glm::ivec2 middlePoints[4] = { {xOff,y},{x+res,yOff},{xOff,y+res},{x,yOff} }; //top, right, bottom, left
+	x /= res;
+	y /= res;
 	switch (state)
 	{
 	case 0: //nothing
 		break;
 	case 1:	//bottom left corner
-		addTriangle(middlePoints[3], squarePoints[3], middlePoints[2]);
+		addTriangle(x, y,middlePoints[3], squarePoints[3], middlePoints[2]);
 		break;
 	case 2:
-		addTriangle(middlePoints[2], squarePoints[2], middlePoints[1]);
+		addTriangle(x, y, middlePoints[2], squarePoints[2], middlePoints[1]);
 		break;
 	case 3:
-		addTriangle(middlePoints[3], squarePoints[3], squarePoints[2]);
-		addTriangle(middlePoints[3], middlePoints[1], squarePoints[2]);
+		addTriangle(x, y, middlePoints[3], squarePoints[3], squarePoints[2]);
+		addTriangle(x, y, middlePoints[3], middlePoints[1], squarePoints[2]);
 		break;
 	case 4:
-		addTriangle(middlePoints[0], squarePoints[1], middlePoints[1]);
+		addTriangle(x, y, middlePoints[0], squarePoints[1], middlePoints[1]);
 		break;
 	case 5:
 		//Corners
-		addTriangle(middlePoints[3], squarePoints[3], middlePoints[2]);
-		addTriangle(middlePoints[0], squarePoints[1], middlePoints[1]);
+		addTriangle(x, y, middlePoints[3], squarePoints[3], middlePoints[2]);
+		addTriangle(x, y, middlePoints[0], squarePoints[1], middlePoints[1]);
 		//Middle
-		addTriangle(middlePoints[3], middlePoints[0], middlePoints[2]);
-		addTriangle(middlePoints[1], middlePoints[0], middlePoints[2]);
+		addTriangle(x, y, middlePoints[3], middlePoints[0], middlePoints[2]);
+		addTriangle(x, y, middlePoints[1], middlePoints[0], middlePoints[2]);
 		break;
 	case 6:
-		addTriangle(middlePoints[0], squarePoints[1], squarePoints[2]);
-		addTriangle(middlePoints[0], middlePoints[2], squarePoints[2]);
+		addTriangle(x, y, middlePoints[0], squarePoints[1], squarePoints[2]);
+		addTriangle(x, y, middlePoints[0], middlePoints[2], squarePoints[2]);
 		break;
 	case 7:
 		//Corners
-		addTriangle(middlePoints[3], squarePoints[3], middlePoints[2]);
-		addTriangle(middlePoints[0], squarePoints[1], middlePoints[1]);
-		addTriangle(middlePoints[2], squarePoints[2], middlePoints[1]);
+		addTriangle(x, y, middlePoints[3], squarePoints[3], middlePoints[2]);
+		addTriangle(x, y, middlePoints[0], squarePoints[1], middlePoints[1]);
+		addTriangle(x, y, middlePoints[2], squarePoints[2], middlePoints[1]);
 		//Middle
-		addTriangle(middlePoints[3], middlePoints[0], middlePoints[2]);
-		addTriangle(middlePoints[1], middlePoints[0], middlePoints[2]);
+		addTriangle(x, y, middlePoints[3], middlePoints[0], middlePoints[2]);
+		addTriangle(x, y, middlePoints[1], middlePoints[0], middlePoints[2]);
 		break;
 	case 8:
-		addTriangle(middlePoints[3], squarePoints[0], middlePoints[0]);
+		addTriangle(x, y, middlePoints[3], squarePoints[0], middlePoints[0]);
 		break;
 	case 9:
-		addTriangle(middlePoints[0], squarePoints[0], squarePoints[3]);
-		addTriangle(middlePoints[0], middlePoints[2], squarePoints[3]);
+		addTriangle(x, y, middlePoints[0], squarePoints[0], squarePoints[3]);
+		addTriangle(x, y, middlePoints[0], middlePoints[2], squarePoints[3]);
 		break;
 	case 10:
 		//Corners
-		addTriangle(middlePoints[2], squarePoints[2], middlePoints[1]);
-		addTriangle(middlePoints[3], squarePoints[0], middlePoints[0]);
+		addTriangle(x, y, middlePoints[2], squarePoints[2], middlePoints[1]);
+		addTriangle(x, y, middlePoints[3], squarePoints[0], middlePoints[0]);
 		//Middle
-		addTriangle(middlePoints[3], middlePoints[0], middlePoints[2]);
-		addTriangle(middlePoints[1], middlePoints[0], middlePoints[2]);
+		addTriangle(x, y, middlePoints[3], middlePoints[0], middlePoints[2]);
+		addTriangle(x, y, middlePoints[1], middlePoints[0], middlePoints[2]);
 		break;
 	case 11:
 		//Corners
-		addTriangle(middlePoints[3], squarePoints[3], middlePoints[2]);
-		addTriangle(middlePoints[2], squarePoints[2], middlePoints[1]);
-		addTriangle(middlePoints[3], squarePoints[0], middlePoints[0]);
+		addTriangle(x, y, middlePoints[3], squarePoints[3], middlePoints[2]);
+		addTriangle(x, y, middlePoints[2], squarePoints[2], middlePoints[1]);
+		addTriangle(x, y, middlePoints[3], squarePoints[0], middlePoints[0]);
 		//Middle
-		addTriangle(middlePoints[3], middlePoints[0], middlePoints[2]);
-		addTriangle(middlePoints[1], middlePoints[0], middlePoints[2]);
+		addTriangle(x, y, middlePoints[3], middlePoints[0], middlePoints[2]);
+		addTriangle(x, y, middlePoints[1], middlePoints[0], middlePoints[2]);
 		break;
 	case 12:
-		addTriangle(middlePoints[3], squarePoints[0], squarePoints[1]);
-		addTriangle(middlePoints[3], middlePoints[1], squarePoints[1]);
+		addTriangle(x, y, middlePoints[3], squarePoints[0], squarePoints[1]);
+		addTriangle(x, y, middlePoints[3], middlePoints[1], squarePoints[1]);
 		break;
 	case 13:
 		//Corners
-		addTriangle(middlePoints[3], squarePoints[3], middlePoints[2]);
-		addTriangle(middlePoints[3], squarePoints[0], middlePoints[0]);
-		addTriangle(middlePoints[0], squarePoints[1], middlePoints[1]);
+		addTriangle(x, y, middlePoints[3], squarePoints[3], middlePoints[2]);
+		addTriangle(x, y, middlePoints[3], squarePoints[0], middlePoints[0]);
+		addTriangle(x, y, middlePoints[0], squarePoints[1], middlePoints[1]);
 		//Middle
-		addTriangle(middlePoints[3], middlePoints[0], middlePoints[2]);
-		addTriangle(middlePoints[1], middlePoints[0], middlePoints[2]);
+		addTriangle(x, y, middlePoints[3], middlePoints[0], middlePoints[2]);
+		addTriangle(x, y, middlePoints[1], middlePoints[0], middlePoints[2]);
 		break;
 	case 14:
 		//Corners
-		addTriangle(middlePoints[2], squarePoints[2], middlePoints[1]);
-		addTriangle(middlePoints[3], squarePoints[0], middlePoints[0]);
-		addTriangle(middlePoints[0], squarePoints[1], middlePoints[1]);
+		addTriangle(x, y, middlePoints[2], squarePoints[2], middlePoints[1]);
+		addTriangle(x, y, middlePoints[3], squarePoints[0], middlePoints[0]);
+		addTriangle(x, y, middlePoints[0], squarePoints[1], middlePoints[1]);
 		//Middle
-		addTriangle(middlePoints[3], middlePoints[0], middlePoints[2]);
-		addTriangle(middlePoints[1], middlePoints[0], middlePoints[2]);
+		addTriangle(x, y, middlePoints[3], middlePoints[0], middlePoints[2]);
+		addTriangle(x, y, middlePoints[1], middlePoints[0], middlePoints[2]);
 		break;
 	case 15:
-		addTriangle(squarePoints[0], squarePoints[1], squarePoints[2]);
-		addTriangle(squarePoints[0], squarePoints[3], squarePoints[2]);
+		addTriangle(x, y, squarePoints[0], squarePoints[1], squarePoints[2]);
+		addTriangle(x, y, squarePoints[0], squarePoints[3], squarePoints[2]);
 		break;
 	default:
 		break;
@@ -121,11 +129,18 @@ void WorldController::drawMarchingSquare(int x, int y, short state)
 
 }
 
-void WorldController::addTriangle(glm::ivec2 a, glm::ivec2 b, glm::ivec2 c)
+void WorldController::addTriangle(int x, int y, glm::ivec2 a, glm::ivec2 b, glm::ivec2 c)
 {
 	vertexBuffer.push_back(a);
 	vertexBuffer.push_back(b);
 	vertexBuffer.push_back(c);
+
+	Triangle t = { a,b,c,{0,0,0},true };
+	if (chunkTriangles.count({ x,y }) == 0)
+		chunkTriangles[{x, y}] = MarchingSquare();
+
+	chunkTriangles[{ x,y }].triangles[chunkTriangles[{ x, y }].tope] = t;
+	chunkTriangles[{ x, y }].tope++;
 }
 
 void WorldController::drawChunks()
@@ -184,6 +199,7 @@ void WorldController::handleWorldModification()
 
 void WorldController::loadWorldChunks()
 {
+	chunkTriangles.clear();
 	vertexBuffer.clear();
 
 	for (int chunkX = chunkInit.x; chunkX <= chunkInit.x + chunkRadius;chunkX++) {
@@ -250,6 +266,16 @@ void WorldController::process()
 
 	player.process();
 
+	glPointSize(5);
+	for (int x = 0; x < chunkSize; x++)
+		for (int y = 0; y < chunkSize; y++)
+		{
+			glBegin(GL_POINTS);
+			glColor3f(1, 1, 1);
+			glVertex2i(x * res, y * res);
+			glEnd();
+			glColor3f(1, 1, 1);
+		}
 
 	glPopMatrix();
 

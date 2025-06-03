@@ -2,6 +2,76 @@
 #include "GameController.h"
 #include "WorldController.h"
 
+void Player::handleCollisions()
+{
+	glm::ivec2 posExcess = { ((int)pos.x) % world->getRes() , ((int)pos.y) % world->getRes() };
+	posExcess.x += pos.x < 0 ? world->getRes() : 0;
+	posExcess.y += pos.y < 0 ? world->getRes() : 0;
+	//glm::ivec2 posSign = { std::abs(pos.x) / pos.x ,std::abs(pos.y) / pos.y };
+	//printf("%d,%d\n", posSign.x, posSign.y);
+	glm::vec2 worldPos = { (int)pos.x - posExcess.x, (int)pos.y - posExcess.y };
+
+	bool cj = false;
+	for (int x = -1; x <= 2;x++) {
+		/*if (x == 0 || x == 1)
+			continue;*/
+		for (int y = -1; y <= 2;y++) {
+			/*	if (y == 0 || y == 1)
+					continue;*/
+			int gridX = worldPos.x / world->getRes() + x;
+			int gridY = worldPos.y / world->getRes() + y;
+			float r = world->isVertexFull(gridX, gridY) ? 1 : 0;
+
+			MarchingSquare ms = world->getSquareAt(gridX, gridY);
+			for (Triangle t : ms.triangles)
+			{
+				if (!t.exists)
+					break;
+
+				diagonalStaticCollision(t);
+			}
+
+			if (y == 1 && (x == 0 || x == 1) && world->isVertexFull(gridX,gridY))
+			{
+				cj = true;
+			}
+		}
+	}
+	canJump = cj;
+}
+
+void Player::diagonalStaticCollision(Triangle &t)
+{
+	//Thanks Javidx9
+	for (int i = 0; i < headVertices.size(); i++)
+	{
+		glm::vec2 line_r1s = pos;
+		glm::vec2 line_r1e = headVertices[i] + pos;
+
+		glm::vec2 displacement = { 0,0 };
+
+		for (int q = 0; q < 3; q++)
+		{
+			glm::vec2 line_r2s = t.vertices[q];
+			glm::vec2 line_r2e = t.vertices[(q + 1) % 3];
+
+			// Standard "off the shelf" line segment intersection
+			float h = (line_r2e.x - line_r2s.x) * (line_r1s.y - line_r1e.y) - (line_r1s.x - line_r1e.x) * (line_r2e.y - line_r2s.y);
+			float t1 = ((line_r2s.y - line_r2e.y) * (line_r1s.x - line_r2s.x) + (line_r2e.x - line_r2s.x) * (line_r1s.y - line_r2s.y)) / h;
+			float t2 = ((line_r1s.y - line_r1e.y) * (line_r1s.x - line_r2s.x) + (line_r1e.x - line_r1s.x) * (line_r1s.y - line_r2s.y)) / h;
+
+			if (t1 >= 0.0f && t1 < 1.0f && t2 >= 0.0f && t2 < 1.0f)
+			{
+				displacement.x += (1.0f - t1) * (line_r1e.x - line_r1s.x);
+				displacement.y += (1.0f - t1) * (line_r1e.y - line_r1s.y);
+			}
+		}
+
+		pos.x -= displacement.x*3;
+		pos.y -= displacement.y*3;
+	}
+}
+
 void Player::handleMovement()
 {
 	if (InputController::right)
@@ -16,26 +86,15 @@ void Player::handleMovement()
 	}
 
 	float gravityAcc = acc.y * GameController::deltaTime / 2;
-	if (!hasFloor()) {
+	if (!canJump) {
 		vel.y += gravityAcc;
 		pos.y += vel.y * GameController::deltaTime;
 		vel.y += gravityAcc;
 	}
-	else if (InputController::space) {
+	else if (InputController::space)
 		vel.y = -200;
-
-		//if (canJump && timers.count("coyoteTime") > 0 && timers.at("coyoteTime") > coyoteTime) {
-		//	canJump = false;
-		//	endTimer("coyoteTime");
-		//}
-		//if (canJump) {
-		//	canJump = false;
-		//	vel.y = -200;
-		//}
-	}else
+	else
 		vel.y = 0;
-
-	
 
 	pos.x += vel.x * GameController::deltaTime;
 	pos.y += vel.y * GameController::deltaTime;
@@ -47,23 +106,7 @@ bool Player::hasFloor()
 	bool ret = false;
 	glPointSize(5);
 	glBegin(GL_POINTS);
-	int posXSign = std::abs(pos.x) / pos.x;
-	int posYSign = std::abs(pos.y) / pos.y;
-	//printf("%d,%d\n", posXSign, posYSign);
-	glm::vec2 gridPos = { (int)pos.x - posXSign * ((int)pos.x) % world->getRes(), (int)pos.y - posYSign * ((int)pos.y) % world->getRes() };
-	for (int x = -1; x <= 2;x++)
-		for (int y = -1; y <= 2;y++) {
-			int gridX = gridPos.x + x * world->getRes();
-			int gridY = gridPos.y + y * world->getRes();
-			float r = world->isVertexFull(gridPos.x / world->getRes() + x, gridPos.y / world->getRes() + y) ? 1 : 0;
-			glColor3f(r, 0, 0);
-			glVertex2d(gridX, gridY);
-			if (y == 2 && (x == 0 || x == 1) && r == 1)
-			{
-				canJump = true;
-				ret = true;
-			}
-		}
+	
 	glEnd();
 
 	glPopMatrix();
@@ -156,6 +199,7 @@ void calculateInverseKin(Arm &arm, glm::vec2 target, glm::vec2 base) {
 void Player::process()
 {
 	this->draw();
+	handleCollisions();
 	handleMovement();
 
 	for (auto timer: timers)

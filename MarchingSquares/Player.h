@@ -4,6 +4,7 @@
 #include "map"
 #include "string"
 
+struct Triangle;
 struct ArmPart;
 
 struct Arm {
@@ -25,7 +26,7 @@ class Player
 private:
 	WorldController* world;
 
-	std::vector<glm::ivec2> headVertices;
+	std::vector<glm::vec2> headVertices;
 	Arm leftArm;
 	Arm rightArm;
 
@@ -42,6 +43,8 @@ private:
 	bool canJump = false;
 
 
+	void handleCollisions();
+	void diagonalStaticCollision(Triangle &t);
 	void handleMovement();
 	bool hasFloor();
 	void drawArm(Arm &arm);
